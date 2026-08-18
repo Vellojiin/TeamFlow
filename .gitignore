@@ -1,0 +1,19 @@
+node_modules/
+.pnpm-store/
+.turbo/
+.next/
+dist/
+coverage/
+
+.env
+.env.*
+!.env.example
+
+Docker volumes/
+*.log
+
+.DS_Store
+
+.PROJECT_PROMPT
+
+.github/*
