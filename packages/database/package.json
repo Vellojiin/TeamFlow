@@ -1,0 +1,31 @@
+{
+  "name": "@teamflow/database",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    ".": "./src/client.ts"
+  },
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.32.1",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "find-config": "^1.0.0",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@prisma/config": "^7.9.1",
+    "@types/pg": "^8.23.1",
+    "dotenv": "^17.4.2",
+    "prisma": "^7.9.1",
+    "tsx": "^4.23.12"
+  }
+}
