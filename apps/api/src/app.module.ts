@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/user.module';
 import { OrganizationsModule } from './organizations/organizations.module';
+import { OrganizationMembersModule } from './organization-members/organization-members.module';
+
 
 @Module({
   imports: [
@@ -15,6 +17,7 @@ import { OrganizationsModule } from './organizations/organizations.module';
     DatabaseModule,
     UsersModule,
     OrganizationsModule,
+    OrganizationMembersModule,
     AuthModule,
   ],
   controllers: [AppController],
