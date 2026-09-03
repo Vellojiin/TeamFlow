@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post, Param, Patch, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, Patch, Delete, UseGuards, Req } from '@nestjs/common';
 import { OrganizationsService } from './organizations.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
-import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import type { AuthenticatedRequest } from '../auth/types/authenticated-request';
 
 @ApiTags('organizations')
 @Controller('organizations')
@@ -10,11 +12,16 @@ export class OrganizationController{
     constructor(private readonly organizationsService: OrganizationsService) {}
 
     @Post()
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Crear una nueva organización' })
     @ApiResponse({ status: 201, description: 'Organización creada exitosamente.' })
     @ApiResponse({ status: 409, description: 'La organización ya existe.' })
-    async create(@Body() dto: CreateOrganizationDto) {
-        return this.organizationsService.create(dto);
+    async create(
+        @Req() request: AuthenticatedRequest,
+        @Body() dto: CreateOrganizationDto
+    ) {
+        return this.organizationsService.create(dto, request.user.id);
     }
 
     @Get()

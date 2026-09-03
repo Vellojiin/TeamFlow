@@ -16,14 +16,26 @@ const isUniqueConstraintError = (error: unknown): boolean => {
 export class OrganizationsService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async create(dto: CreateOrganizationDto) {
+    async create(dto: CreateOrganizationDto, id: string) {
         try {
 
-            return await this.prisma.client.organization.create({
-                data: { 
-                    name: dto.name, 
-                    slug: dto.slug, 
-                },
+            return await this.prisma.client.$transaction(async (tx) => {
+                const organization = await tx.organization.create({
+                    data: { 
+                        name: dto.name, 
+                        slug: dto.slug, 
+                    },
+                });
+
+                await tx.organizationMember.create({
+                    data: {
+                        organizationId: organization.id,
+                        userId: id,
+                        role: "OWNER"
+                    },
+                });
+
+                return organization;
             });
         } catch (error) {
             if (isUniqueConstraintError(error)) {

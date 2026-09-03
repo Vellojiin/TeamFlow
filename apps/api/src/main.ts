@@ -27,6 +27,7 @@ async function bootstrap() {
     .setTitle('API')
     .setDescription('API for the TeamFlow application')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
     const document = require('@nestjs/swagger').SwaggerModule.createDocument(app, config);
