@@ -45,17 +45,24 @@ export class OrganizationsService {
         }
     }
 
-    async findAll() {
+    async findAll(userId: string) {
         return this.prisma.client.organization.findMany({
-            orderBy: {
-                createdAt: 'desc',
-            },
-        });
-    }
+    where: {
+        members: {
+        some: {
+            userId,
+        },
+        },
+    },
+    orderBy: {
+        createdAt: "desc",
+    },
+    });
+}
 
-    async findOne(id: string) {
-        const organization = await this.prisma.client.organization.findUnique({
-            where: { id },
+    async findOne(id: string, userId: string) {
+        const organization = await this.prisma.client.organization.findFirst({
+            where: { id, members: { some: { userId } } },
         });
 
         if (!organization) {
@@ -65,8 +72,8 @@ export class OrganizationsService {
         return organization;
     }
 
-    async update(id: string, dto: UpdateOrganizationDto) {
-        await this.findOne(id);
+    async update(id: string, dto: UpdateOrganizationDto, userId: string) {
+        await this.findOne(id, userId);
 
         try {
             return await this.prisma.client.organization.update({
@@ -81,8 +88,8 @@ export class OrganizationsService {
         }
     }
 
-    async remove(id: string) {
-        await this.findOne(id);
+    async remove(id: string, userId: string) {
+        await this.findOne(id, userId);
 
         await this.prisma.client.organization.delete({
             where: { id },
