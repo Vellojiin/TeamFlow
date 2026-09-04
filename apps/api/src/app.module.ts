@@ -7,6 +7,8 @@ import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/user.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { OrganizationMembersModule } from './organization-members/organization-members.module';
+import { ProjectsModule } from './projects/projects.module'; 
+import { TasksModule } from './task/tasks.module';
 
 
 @Module({
@@ -18,6 +20,8 @@ import { OrganizationMembersModule } from './organization-members/organization-m
     UsersModule,
     OrganizationsModule,
     OrganizationMembersModule,
+    ProjectsModule,
+    TasksModule,
     AuthModule,
   ],
   controllers: [AppController],

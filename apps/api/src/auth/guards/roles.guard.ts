@@ -1,4 +1,10 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
+import {
+    CanActivate,
+    ExecutionContext,
+    ForbiddenException,
+    Injectable,
+    NotFoundException,
+} from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 
 import { PrismaService } from "../../database/prisma.service";
@@ -25,9 +31,30 @@ export class RolesGuard implements CanActivate {
         context.switchToHttp().getRequest<AuthenticatedRequest>();
 
     const userId = request.user.id;
-    const organizationId = Array.isArray(request.params?.organizationId)
+    let organizationId = Array.isArray(request.params?.organizationId)
         ? request.params.organizationId[0]
         : request.params?.organizationId ?? request.params?.id;
+
+    const projectIdParam = request.params?.projectId;
+    const projectId = Array.isArray(projectIdParam)
+        ? projectIdParam[0]
+        : projectIdParam;
+    if (projectId) {
+        const project = await this.prisma.client.project.findUnique({
+            where: {
+                id: projectId,
+            },
+            select: {
+                organizationId: true,
+            },
+        });
+
+        if (!project) {
+            throw new NotFoundException("Proyecto no encontrado");
+        }
+
+        organizationId = project.organizationId;
+    }
 
     if (!organizationId) {
         throw new ForbiddenException(
