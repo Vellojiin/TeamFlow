@@ -8,6 +8,7 @@ import { UsersModule } from './users/user.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { OrganizationMembersModule } from './organization-members/organization-members.module';
 import { ProjectsModule } from './projects/projects.module'; 
+import { TasksModule } from './task/tasks.module';
 
 
 @Module({
@@ -20,6 +21,7 @@ import { ProjectsModule } from './projects/projects.module';
     OrganizationsModule,
     OrganizationMembersModule,
     ProjectsModule,
+    TasksModule,
     AuthModule,
   ],
   controllers: [AppController],
