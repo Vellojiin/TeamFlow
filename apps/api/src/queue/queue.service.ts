@@ -1,11 +1,11 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Queue } from 'bullmq';
-import { TASK_QUEUE, TASK_CREATE_JOB } from './queue.constants';
+import { TASK_QUEUE, TASK_CREATE_JOB, TaskCreatedJobData } from '@teamflow/queue';
 
 @Injectable()
 export class QueueService implements OnModuleDestroy {
-    private readonly taskQueue: Queue;
+    private readonly taskQueue: Queue<TaskCreatedJobData>;
 
     constructor(private readonly configService: ConfigService) {
         const host = this.configService.get<string>('REDIS_HOST') ?? 'localhost';
