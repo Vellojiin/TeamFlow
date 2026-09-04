@@ -10,6 +10,7 @@ import { OrganizationMembersModule } from './organization-members/organization-m
 import { ProjectsModule } from './projects/projects.module'; 
 import { TasksModule } from './task/tasks.module';
 import { QueueModule } from './queue/queue.module';
+import { ActivityLogModule } from './activity-log/activity-log.module';
 
 
 @Module({
@@ -25,6 +26,7 @@ import { QueueModule } from './queue/queue.module';
     TasksModule,
     AuthModule,
     QueueModule,
+    ActivityLogModule,
   ],
   controllers: [AppController],
   providers: [AppService],

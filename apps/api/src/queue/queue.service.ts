@@ -18,8 +18,8 @@ export class QueueService implements OnModuleDestroy {
         });
     }
 
-    async addTaskCreatedJob(taskId: string){
-        return this.taskQueue.add(TASK_CREATE_JOB, { taskId },{
+    async addTaskCreatedJob(taskId: string, userId: string, organizationId: string){
+        return this.taskQueue.add(TASK_CREATE_JOB, { taskId, userId, organizationId },{
             attempts: 3,
             backoff: {
                 type: 'exponential',

@@ -34,6 +34,7 @@ export class TaskService {
         organizationId: string,
         projectId: string,
         createTaskDto: CreateTaskDto,
+        userId: string,
     ) {
         await this.getProject(organizationId, projectId);
 
@@ -64,7 +65,7 @@ export class TaskService {
             },
         });
 
-        await this.queueService.addTaskCreatedJob(task.id);
+        await this.queueService.addTaskCreatedJob(task.id, userId, organizationId);
         return task
     }
 

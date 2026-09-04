@@ -3,4 +3,6 @@ export const TASK_CREATE_JOB = 'task-created';
 
 export interface TaskCreatedJobData {
     taskId: string;
+    userId: string;
+    organizationId: string;
 }

@@ -9,6 +9,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { OrganizationAccessGuard } from '../auth/guards/organization-access.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import type { AuthenticatedUser } from '../auth/types/authenticated-request';
 
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiParam } from '@nestjs/swagger';
 
@@ -29,8 +31,14 @@ export class TaskController {
         @Param('organizationId') organizationId: string,
         @Param('projectId') projectId: string,
         @Body() createTaskDto: CreateTaskDto,
+        @CurrentUser() user: AuthenticatedUser,
     ) {
-        return this.taskService.create(organizationId, projectId, createTaskDto);
+        return this.taskService.create(
+            organizationId,
+            projectId,
+            createTaskDto,
+            user.id,
+        );
     }
 
     @Get()

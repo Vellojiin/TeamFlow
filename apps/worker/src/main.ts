@@ -1,3 +1,10 @@
+import dotenv from 'dotenv';
+import path from 'node:path';
+
+dotenv.config({
+  path: path.resolve(__dirname, '../../../.env'),
+});
+
 import { NestFactory } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 import { AppModule } from './app.module';
