@@ -9,10 +9,11 @@ import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 export class TaskService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async create(projectId: string, createTaskDto: CreateTaskDto) {
-        const project = await this.prisma.client.project.findUnique({
+    private async getProject(organizationId: string, projectId: string) {
+        const project = await this.prisma.client.project.findFirst({
             where: {
                 id: projectId,
+                organizationId,
             },
             select: {
                 id: true,
@@ -24,12 +25,22 @@ export class TaskService {
             throw new NotFoundException('Proyecto no encontrado');
         }
 
+        return project;
+    }
+
+    async create(
+        organizationId: string,
+        projectId: string,
+        createTaskDto: CreateTaskDto,
+    ) {
+        await this.getProject(organizationId, projectId);
+
         if (createTaskDto.assigneeId) {
-        await this.ensureUserIsOrganizationMember(
-        createTaskDto.assigneeId,
-        project.organizationId,
-    );
-}
+            await this.ensureUserIsOrganizationMember(
+                createTaskDto.assigneeId,
+                organizationId,
+            );
+        }
 
         return this.prisma.client.task.create({
             data: {
@@ -52,7 +63,9 @@ export class TaskService {
         });
     }
 
-    async findAll(projectId: string) {
+    async findAll(organizationId: string, projectId: string) {
+        await this.getProject(organizationId, projectId);
+
         return this.prisma.client.task.findMany({
             where: {
                 projectId,
@@ -72,7 +85,13 @@ export class TaskService {
         });
     }
 
-    async findOne(projectId: string, taskId: string) {
+    async findOne(
+        organizationId: string,
+        projectId: string,
+        taskId: string,
+    ) {
+        await this.getProject(organizationId, projectId);
+
         const task = await this.prisma.client.task.findUnique({
             where: {
                 id: taskId,
@@ -96,27 +115,18 @@ export class TaskService {
         return task;
     }
 
-    async update(projectId: string, taskId: string, updateTaskDto: UpdateTaskDto) {
-        await this.findOne(projectId, taskId);
-
-        const project = await this.prisma.client.project.findUnique({
-            where: {
-                id: projectId,
-            },
-            select: {
-                id: true,
-                organizationId: true,
-            },
-        });
-
-        if (!project) {
-            throw new NotFoundException('Proyecto no encontrado');
-        }
+    async update(
+        organizationId: string,
+        projectId: string,
+        taskId: string,
+        updateTaskDto: UpdateTaskDto,
+    ) {
+        await this.findOne(organizationId, projectId, taskId);
 
         if(updateTaskDto.assigneeId) {
             await this.ensureUserIsOrganizationMember(
                 updateTaskDto.assigneeId,
-                project.organizationId,
+                organizationId,
             );
         }
 
@@ -145,8 +155,13 @@ export class TaskService {
         });
     }
 
-    async updateStatus(projectId: string, taskId: string, dto: UpdateTaskStatusDto) {
-        await this.findOne(projectId, taskId);
+    async updateStatus(
+        organizationId: string,
+        projectId: string,
+        taskId: string,
+        dto: UpdateTaskStatusDto,
+    ) {
+        await this.findOne(organizationId, projectId, taskId);
 
         return this.prisma.client.task.update({
             where: {
@@ -167,17 +182,22 @@ export class TaskService {
         });
     }
 
-    async remove(projectId: string, taskId: string) {
-        await this.findOne(projectId, taskId);
+    async remove(
+        organizationId: string,
+        projectId: string,
+        taskId: string,
+    ) {
+        await this.findOne(organizationId, projectId, taskId);
 
-        return this.prisma.client.task.delete({
+        await this.prisma.client.task.delete({
             where: {
                 id: taskId,
             },
         });
+
         return {
             message: 'Tarea eliminada correctamente',
-        }
+        };
     }
 
     private async ensureUserExists(userId: string) {
