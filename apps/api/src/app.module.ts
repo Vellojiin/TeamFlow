@@ -7,6 +7,7 @@ import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/user.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { OrganizationMembersModule } from './organization-members/organization-members.module';
+import { ProjectsModule } from './projects/projects.module'; 
 
 
 @Module({
@@ -18,6 +19,7 @@ import { OrganizationMembersModule } from './organization-members/organization-m
     UsersModule,
     OrganizationsModule,
     OrganizationMembersModule,
+    ProjectsModule,
     AuthModule,
   ],
   controllers: [AppController],
