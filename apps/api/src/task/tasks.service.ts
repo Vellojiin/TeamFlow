@@ -5,9 +5,11 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 
+import { QueueService } from '../queue/queue.service';
+
 @Injectable()
 export class TaskService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(private readonly prisma: PrismaService, private readonly queueService: QueueService) {}
 
     private async getProject(organizationId: string, projectId: string) {
         const project = await this.prisma.client.project.findFirst({
@@ -42,7 +44,7 @@ export class TaskService {
             );
         }
 
-        return this.prisma.client.task.create({
+        const task = await this.prisma.client.task.create({
             data: {
                 title: createTaskDto.title,
                 description: createTaskDto.description,
@@ -61,6 +63,9 @@ export class TaskService {
                 },
             },
         });
+
+        await this.queueService.addTaskCreatedJob(task.id);
+        return task
     }
 
     async findAll(organizationId: string, projectId: string) {
