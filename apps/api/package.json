@@ -30,7 +30,6 @@
     "@prisma/client": "^7.9.1",
     "@teamflow/database": "workspace:*",
     "@teamflow/queue": "workspace:*",
-    "@teamflow/events": "workspace:*",
     "argon2": "^0.45.1",
     "bullmq": "^6.3.4",
     "class-transformer": "^0.5.1",
