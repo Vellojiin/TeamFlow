@@ -9,6 +9,8 @@ import { OrganizationsModule } from './organizations/organizations.module';
 import { OrganizationMembersModule } from './organization-members/organization-members.module';
 import { ProjectsModule } from './projects/projects.module'; 
 import { TasksModule } from './task/tasks.module';
+import { QueueModule } from './queue/queue.module';
+import { ActivityLogModule } from './activity-log/activity-log.module';
 
 
 @Module({
@@ -23,6 +25,8 @@ import { TasksModule } from './task/tasks.module';
     ProjectsModule,
     TasksModule,
     AuthModule,
+    QueueModule,
+    ActivityLogModule,
   ],
   controllers: [AppController],
   providers: [AppService],

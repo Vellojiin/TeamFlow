@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "exports": {
-    ".": "./src/client.ts"
+    ".": "./dist/index.js",
+    "./prisma.service": "./dist/prisma.service.js"
   },
   "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
@@ -16,6 +19,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.32.1",
   "dependencies": {
+    "@nestjs/common": "^11.1.6",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
     "find-config": "^1.0.0",
@@ -26,6 +30,7 @@
     "@types/pg": "^8.23.1",
     "dotenv": "^17.4.2",
     "prisma": "^7.9.1",
-    "tsx": "^4.23.12"
+    "tsx": "^4.23.12",
+    "typescript": "^5.7.3"
   }
 }

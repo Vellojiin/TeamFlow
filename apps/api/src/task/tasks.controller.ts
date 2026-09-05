@@ -9,6 +9,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { OrganizationAccessGuard } from '../auth/guards/organization-access.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import type { AuthenticatedUser } from '../auth/types/authenticated-request';
 
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiParam } from '@nestjs/swagger';
 
@@ -25,8 +27,18 @@ export class TaskController {
     @ApiParam({ name: 'organizationId', description: 'ID de la organización' })
     @ApiParam({ name: 'projectId', description: 'ID del proyecto' })
     @ApiOperation({ summary: 'Crear nueva tarea' })
-    create(@Param('projectId') projectId: string, @Body() createTaskDto: CreateTaskDto) {
-        return this.taskService.create(projectId, createTaskDto);
+    create(
+        @Param('organizationId') organizationId: string,
+        @Param('projectId') projectId: string,
+        @Body() createTaskDto: CreateTaskDto,
+        @CurrentUser() user: AuthenticatedUser,
+    ) {
+        return this.taskService.create(
+            organizationId,
+            projectId,
+            createTaskDto,
+            user.id,
+        );
     }
 
     @Get()
@@ -35,8 +47,11 @@ export class TaskController {
     @ApiOperation({
         summary: 'Obtener todas las tareas de un proyecto'
     })
-    findAll(@Param('projectId') projectId: string) {
-        return this.taskService.findAll(projectId);
+    findAll(
+        @Param('organizationId') organizationId: string,
+        @Param('projectId') projectId: string,
+    ) {
+        return this.taskService.findAll(organizationId, projectId);
     }
 
     @Get(':taskId')
@@ -46,8 +61,12 @@ export class TaskController {
     @ApiOperation({
         summary: 'Obtener una tarea específica de un proyecto'
     })
-    findOne(@Param('projectId') projectId: string, @Param('taskId') taskId: string) {
-        return this.taskService.findOne(projectId, taskId);
+    findOne(
+        @Param('organizationId') organizationId: string,
+        @Param('projectId') projectId: string,
+        @Param('taskId') taskId: string,
+    ) {
+        return this.taskService.findOne(organizationId, projectId, taskId);
     }
 
     @Patch(':taskId')
@@ -57,8 +76,18 @@ export class TaskController {
     @ApiParam({ name: 'projectId', description: 'ID del proyecto' })
     @ApiParam({ name: 'taskId', description: 'ID de la tarea' })
     @ApiOperation({ summary: 'Actualizar tarea' })
-    update(@Param("projectId") projectId: string, @Param("taskId") taskId: string, @Body() updateTaskDto: UpdateTaskDto) {
-        return this.taskService.update(projectId, taskId, updateTaskDto);
+    update(
+        @Param('organizationId') organizationId: string,
+        @Param('projectId') projectId: string,
+        @Param('taskId') taskId: string,
+        @Body() updateTaskDto: UpdateTaskDto,
+    ) {
+        return this.taskService.update(
+            organizationId,
+            projectId,
+            taskId,
+            updateTaskDto,
+        );
     }
 
     @Patch(":taskId/status")
@@ -68,8 +97,18 @@ export class TaskController {
     @ApiParam({ name: 'projectId', description: 'ID del proyecto' })
     @ApiParam({ name: 'taskId', description: 'ID de la tarea' })
     @ApiOperation({ summary: 'Actualizar el estado de una tarea específica de un proyecto' })
-    updateStatus(@Param('projectId') projectId: string, @Param('taskId') taskId: string, @Body() updateTaskStatusDto: UpdateTaskStatusDto) {
-        return this.taskService.updateStatus(projectId, taskId, updateTaskStatusDto);
+    updateStatus(
+        @Param('organizationId') organizationId: string,
+        @Param('projectId') projectId: string,
+        @Param('taskId') taskId: string,
+        @Body() updateTaskStatusDto: UpdateTaskStatusDto,
+    ) {
+        return this.taskService.updateStatus(
+            organizationId,
+            projectId,
+            taskId,
+            updateTaskStatusDto,
+        );
     }
 
     @Delete(':taskId')
@@ -79,7 +118,11 @@ export class TaskController {
     @ApiParam({ name: 'projectId', description: 'ID del proyecto' })
     @ApiParam({ name: 'taskId', description: 'ID de la tarea' })
     @ApiOperation({ summary: 'Eliminar una tarea específica de un proyecto' })
-    remove(@Param('projectId') projectId: string, @Param('taskId') taskId: string) {
-        return this.taskService.remove(projectId, taskId);
+    remove(
+        @Param('organizationId') organizationId: string,
+        @Param('projectId') projectId: string,
+        @Param('taskId') taskId: string,
+    ) {
+        return this.taskService.remove(organizationId, projectId, taskId);
     }
 }
