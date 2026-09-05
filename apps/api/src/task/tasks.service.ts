@@ -5,11 +5,12 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 
-import { QueueService } from '../queue/queue.service';
+import { DomainEventBusService } from '../events/domain-event-bus.service';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class TaskService {
-    constructor(private readonly prisma: PrismaService, private readonly queueService: QueueService) {}
+    constructor(private readonly prisma: PrismaService, private readonly eventBus: DomainEventBusService) {}
 
     private async getProject(organizationId: string, projectId: string) {
         const project = await this.prisma.client.project.findFirst({
@@ -65,7 +66,14 @@ export class TaskService {
             },
         });
 
-        await this.queueService.addTaskCreatedJob(task.id, userId, organizationId);
+        await this.eventBus.publishTaskCreated({
+            taskId: task.id,
+            userId,
+            organizationId,
+            eventId: randomUUID(),
+            projectId,
+            occurredAt: new Date().toISOString()
+        });
         return task
     }
 

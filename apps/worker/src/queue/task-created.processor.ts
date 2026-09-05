@@ -1,13 +1,14 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Job, Worker } from 'bullmq';
-import { TASK_QUEUE, TASK_CREATE_JOB, TaskCreatedJobData } from '@teamflow/queue';
+import { TASK_QUEUE } from '@teamflow/queue';
 import { PrismaService } from '@teamflow/database';
+import { TASK_CREATED_EVENT, TaskCreatedEvent } from '@teamflow/events';
 
 @Injectable()
 export class TaskCreatedProcessor implements OnModuleInit, OnModuleDestroy {
     private readonly logger = new Logger(TaskCreatedProcessor.name);
-    private worker!: Worker<TaskCreatedJobData>;
+    private worker!: Worker<TaskCreatedEvent>;
 
     constructor(
         private readonly configService: ConfigService,
@@ -18,16 +19,10 @@ export class TaskCreatedProcessor implements OnModuleInit, OnModuleDestroy {
         const host = this.configService.get<string>('REDIS_HOST') ?? 'localhost';
         const port = this.configService.get<number>('REDIS_PORT') ?? 6379;
 
-        this.worker = new Worker<TaskCreatedJobData>(
+        this.worker = new Worker<TaskCreatedEvent>(
             TASK_QUEUE,
-            async (job: Job<TaskCreatedJobData>) => {
-                switch (job.name) {
-                    case TASK_CREATE_JOB:
-                        await this.handleTaskCreated(job.data);
-                        break;
-                    default:
-                        this.logger.log(`Activity created for task ${job.data.taskId}`);
-                }
+            async (job: Job<TaskCreatedEvent>) => {
+                await this.handleTaskCreated(job);
             },
             {
                 connection: {
@@ -46,12 +41,26 @@ export class TaskCreatedProcessor implements OnModuleInit, OnModuleDestroy {
         });
     }
 
-    private async handleTaskCreated(data: TaskCreatedJobData) {
-        this.logger.log(`Processing task-created job for task ${data.taskId}`);
+    private async handleTaskCreated(job: Job<TaskCreatedEvent>) {
+        if (job.name !== TASK_CREATED_EVENT) {
+            this.logger.warn(`Unknown job: ${job.name}`);
+            return;
+        }
+
+        const event = job.data as TaskCreatedEvent;
+
+        const {
+            eventId,
+            taskId,
+            userId,
+            organizationId,
+        } = event;
+
+        this.logger.log(`Processing task-created job for task ${taskId}`);
 
         const task = await this.prismaService.client.task.findUnique({
             where: {
-                id: data.taskId,
+                id: taskId,
             },
             select: {
                 id: true,
@@ -61,15 +70,15 @@ export class TaskCreatedProcessor implements OnModuleInit, OnModuleDestroy {
         });
 
         if (!task) {
-            throw new Error(`Task ${data.taskId} not found`);
+            throw new Error(`Task ${taskId} not found`);
         }
 
         await this.prismaService.client.activityLog.create({
             data: {
-                eventId: task.id,
+                eventId,
                 type: 'TASK_CREATED',
-                organizationId: data.organizationId,
-                userId: data.userId,
+                organizationId,
+                userId,
                 taskId: task.id,
                 projectId: task.projectId,
                 metadata: {

@@ -2,6 +2,7 @@ import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Queue } from 'bullmq';
 import { TASK_QUEUE, TASK_CREATE_JOB, TaskCreatedJobData } from '@teamflow/queue';
+import { TASK_CREATED_EVENT, TaskCreatedEvent } from '@teamflow/events';
 
 @Injectable()
 export class QueueService implements OnModuleDestroy {
@@ -18,8 +19,9 @@ export class QueueService implements OnModuleDestroy {
         });
     }
 
-    async addTaskCreatedJob(taskId: string, userId: string, organizationId: string){
-        return this.taskQueue.add(TASK_CREATE_JOB, { taskId, userId, organizationId },{
+    async addTaskCreatedJob(event: TaskCreatedEvent){
+        return this.taskQueue.add(TASK_CREATED_EVENT, event,{
+            jobId: event.taskId,
             attempts: 3,
             backoff: {
                 type: 'exponential',

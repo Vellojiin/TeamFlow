@@ -41,6 +41,9 @@ importers:
       '@teamflow/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@teamflow/events':
+        specifier: workspace:*
+        version: link:../../packages/events
       '@teamflow/queue':
         specifier: workspace:*
         version: link:../../packages/queue
@@ -202,6 +205,9 @@ importers:
       '@teamflow/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@teamflow/events':
+        specifier: workspace:*
+        version: link:../../packages/events
       '@teamflow/queue':
         specifier: workspace:*
         version: link:../../packages/queue
@@ -267,6 +273,12 @@ importers:
       tsx:
         specifier: ^4.23.12
         version: 4.23.12
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
+  packages/events:
+    devDependencies:
       typescript:
         specifier: ^5.7.3
         version: 5.9.3

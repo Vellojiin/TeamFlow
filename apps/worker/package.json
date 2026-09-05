@@ -16,6 +16,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/platform-express": "^11.1.6",
     "@teamflow/database": "workspace:*",
+    "@teamflow/events": "workspace:*",
     "@teamflow/queue": "workspace:*",
     "bullmq": "^6.3.4",
     "dotenv": "^17.4.2",
