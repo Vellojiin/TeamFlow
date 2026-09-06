@@ -24,6 +24,46 @@ export class OutboxPublisher implements OnModuleInit, OnModuleDestroy {
     void this.publishPendingEvents();
   }
 
+  private async publishEvent(event: {id: string, eventId: string, type: string, payload: unknown}) {
+    try {
+      await this.queueService.publish(
+        event.type,
+        event.payload,
+        event.eventId,
+      );
+
+      await this.prisma.client.outboxEvent.update({
+        where: {
+          id: event.id,
+        },
+        data: {
+          publishedAt: new Date(),
+          attempts: {
+            increment: 1,
+          },
+        }
+      })
+
+      this.logger.log(`Successfully published event ${event.id}`);
+
+      return true;
+    } catch (error) {
+      await this.prisma.client.outboxEvent.update({
+        where : {
+          id: event.id,
+        },
+        data: {
+          attempts: {
+            increment: 1,
+          },
+        },
+      });
+
+      this.logger.error(`Failed to publish event ${event.id}`, error instanceof Error ? error : new Error(String(error)));
+      return false;
+    }
+  }
+
   async publishPendingEvents() {
     if (this.isPublishing) {
       return;
@@ -32,19 +72,15 @@ export class OutboxPublisher implements OnModuleInit, OnModuleDestroy {
     this.isPublishing = true;
 
     try {
-      const pendingEvents = await this.prisma.client.outboxEvent.findMany({
+      const events = await this.prisma.client.outboxEvent.findMany({
         where: {
           publishedAt: null,
         },
       });
 
-      for (const event of pendingEvents) {
+      for (const event of events) {
         try {
-          await this.queueService.publish(event.type, event.payload, event.id);
-          await this.prisma.client.outboxEvent.update({
-            where: { id: event.id },
-            data: { publishedAt: new Date() },
-          });
+          await this.publishEvent(event);
         } catch (error) {
           this.logger.error(`Failed to publish event ${event.id}`, error);
         }

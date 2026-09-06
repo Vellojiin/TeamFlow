@@ -73,7 +73,8 @@ export class TaskCreatedProcessor implements OnModuleInit, OnModuleDestroy {
             throw new Error(`Task ${taskId} not found`);
         }
 
-        await this.prismaService.client.activityLog.create({
+        try{
+            await this.prismaService.client.activityLog.create({
             data: {
                 eventId,
                 type: 'TASK_CREATED',
@@ -86,6 +87,19 @@ export class TaskCreatedProcessor implements OnModuleInit, OnModuleDestroy {
                 },
             },
         });
+        } catch (error) {
+            if (
+                error instanceof Error &&
+                'code' in error &&
+                error.code === 'P2002'
+            ) {
+                this.logger.warn(`Activity already exists for event ${eventId}`);
+
+    return;
+            }
+
+            throw error
+        }
     }
 
     async onModuleDestroy() {
