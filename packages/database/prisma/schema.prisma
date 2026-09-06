@@ -109,6 +109,9 @@ model OutboxEvent {
 
   publishedAt   DateTime?
   attempts      Int      @default(0)
+  lastAttemptAt  DateTime?
+  lastError     String?
+
   createdAt     DateTime @default(now())
 
   @@index([publishedAt])
