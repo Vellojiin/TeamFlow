@@ -1,0 +1,17 @@
+{
+    "name": "@teamflow/events",
+    "version": "1.0.0",
+    "private": true,
+    "exports": {
+        ".": "./dist/index.js"
+    },
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "build": "tsc -p tsconfig.json",
+        "dev": "tsc -p tsconfig.json --watch"
+    },
+    "devDependencies": {
+        "typescript": "^5.7.3"
+    }
+}

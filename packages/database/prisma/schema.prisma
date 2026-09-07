@@ -101,6 +101,23 @@ model ActivityLog {
   @@index([userId])
 }
 
+model OutboxEvent {
+  id            String   @id @default(cuid())
+  eventId       String   @unique
+  type          String
+  payload       Json
+
+  publishedAt   DateTime?
+  attempts      Int      @default(0)
+  lastAttemptAt  DateTime?
+  lastError     String?
+
+  createdAt     DateTime @default(now())
+
+  @@index([publishedAt])
+  @@index([createdAt])
+}
+
 enum OrganizationRole {
   OWNER
   ADMIN

@@ -11,6 +11,8 @@ import { ProjectsModule } from './projects/projects.module';
 import { TasksModule } from './task/tasks.module';
 import { QueueModule } from './queue/queue.module';
 import { ActivityLogModule } from './activity-log/activity-log.module';
+import { OutboxModule } from './outbox/outbox.module';
+
 
 
 @Module({
@@ -26,6 +28,7 @@ import { ActivityLogModule } from './activity-log/activity-log.module';
     TasksModule,
     AuthModule,
     QueueModule,
+    OutboxModule,
     ActivityLogModule,
   ],
   controllers: [AppController],
