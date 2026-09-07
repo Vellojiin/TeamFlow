@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
+import { type JwtService } from "@nestjs/jwt";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import * as argon2 from "argon2";
 import { PrismaService } from "../database/prisma.service";
@@ -11,6 +11,16 @@ export class AuthService {
     constructor ( private readonly prisma: PrismaService, private readonly jwtService: JwtService ) {}
 
     async register(dto: RegisterDTO) {
+        const existingUser = await this.prisma.client.user.findUnique({
+            where: {
+                email: dto.email.toLowerCase().trim(),
+            },
+        });
+
+        if (existingUser) {
+            throw new ConflictException("Usuario ya existe");
+        }
+
         const passwordHash = await argon2.hash(dto.password);
 
         try {
@@ -26,7 +36,8 @@ export class AuthService {
                     name: true,
                 },
             });
-            return user;
+            const { password: _password, ...safeUser } = user;
+            return safeUser;
         } catch (error) {
             if (
                 error instanceof PrismaClientKnownRequestError &&
