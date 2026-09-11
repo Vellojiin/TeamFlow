@@ -11,6 +11,8 @@ model User {
   email         String               @unique
   name          String?
   password      String
+  refreshTokenHash String?
+  refreshTokenExpiresAt DateTime?
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
   activityLogs  ActivityLog[]
