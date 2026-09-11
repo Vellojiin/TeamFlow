@@ -930,3 +930,17 @@ Cada decisión debe responder:
 La complejidad debe introducirse únicamente cuando aporta valor.
 
 El objetivo final es desarrollar criterio de ingeniería, no solamente conocer herramientas.
+
+## 28. Paleta de colores
+
+Azul Marino Profundo (Base / Estructura): #0E3A78
+
+Azul Real (Transición / Conexión): #1E62C4
+
+Cian Eléctrico (Flujo Principal): #17A8E0
+
+Turquesa / Menta (Dirección y Crecimiento): #22D1B2
+
+Blanco Cálido (Fondo): #FAFAF8
+
+Tipografia: Monserrat
