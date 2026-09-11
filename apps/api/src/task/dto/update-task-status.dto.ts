@@ -1,11 +1,11 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum } from 'class-validator';
 
 export class UpdateTaskStatusDto {
-    @ApiProperty({
+  @ApiProperty({
     enum: ['TODO', 'IN_PROGRESS', 'DONE'],
     example: 'IN_PROGRESS',
-    })
-    @IsEnum(['TODO', 'IN_PROGRESS', 'DONE'])
-    status!: 'TODO' | 'IN_PROGRESS' | 'DONE';
+  })
+  @IsEnum(['TODO', 'IN_PROGRESS', 'DONE'])
+  status!: 'TODO' | 'IN_PROGRESS' | 'DONE';
 }

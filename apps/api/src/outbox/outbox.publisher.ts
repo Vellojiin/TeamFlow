@@ -1,4 +1,9 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+  OnModuleDestroy,
+} from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { QueueService } from '../queue/queue.service';
 
@@ -18,18 +23,15 @@ export class OutboxPublisher implements OnModuleInit, OnModuleDestroy {
     void this.publishPendingEvents();
   }
 
-  async getStatus(){
-    const [
-      pending,
-      published,
-      failed
-    ] = await Promise.all([ this.prisma.client.outboxEvent.count({
+  async getStatus() {
+    const [pending, published, failed] = await Promise.all([
+      this.prisma.client.outboxEvent.count({
         where: {
           publishedAt: null,
           attempts: 0,
         },
       }),
-      
+
       this.prisma.client.outboxEvent.count({
         where: {
           publishedAt: {
@@ -56,20 +58,24 @@ export class OutboxPublisher implements OnModuleInit, OnModuleDestroy {
   }
 
   private scheduleNextRun() {
-    const delay = this.consecutiveFailures === 0 ? 1000 : Math.min(1000 * 2 ** this.consecutiveFailures, 30000);
+    const delay =
+      this.consecutiveFailures === 0
+        ? 1000
+        : Math.min(1000 * 2 ** this.consecutiveFailures, 30000);
 
     this.interval = setTimeout(() => {
-      void this.publishPendingEvents()
+      void this.publishPendingEvents();
     }, delay);
   }
 
-  private async publishEvent(event: {id: string, eventId: string, type: string, payload: unknown}) {
+  private async publishEvent(event: {
+    id: string;
+    eventId: string;
+    type: string;
+    payload: unknown;
+  }) {
     try {
-      await this.queueService.publish(
-        event.type,
-        event.payload,
-        event.eventId,
-      );
+      await this.queueService.publish(event.type, event.payload, event.eventId);
 
       await this.prisma.client.outboxEvent.update({
         where: {
@@ -82,17 +88,18 @@ export class OutboxPublisher implements OnModuleInit, OnModuleDestroy {
           attempts: {
             increment: 1,
           },
-        }
-      })
+        },
+      });
 
       this.logger.log(`Successfully published event ${event.id}`);
 
       return true;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
 
       await this.prisma.client.outboxEvent.update({
-        where : {
+        where: {
           id: event.id,
         },
         data: {
@@ -104,70 +111,73 @@ export class OutboxPublisher implements OnModuleInit, OnModuleDestroy {
         },
       });
 
-      this.logger.error(`Failed to publish event ${event.id}`, error instanceof Error ? error : new Error(String(error)));
+      this.logger.error(
+        `Failed to publish event ${event.id}`,
+        error instanceof Error ? error : new Error(String(error)),
+      );
       return false;
     }
   }
 
   async publishPendingEvents() {
-  if (this.isPublishing) {
-    return;
-  }
-
-  this.isPublishing = true;
-
-  try {
-    const events = await this.prisma.client.outboxEvent.findMany({
-      where: {
-        publishedAt: null,
-      },
-      orderBy: {
-        createdAt: 'asc',
-      },
-      take: 50,
-    });
-
-    if (events.length === 0) {
-      this.consecutiveFailures = 0;
+    if (this.isPublishing) {
       return;
     }
 
-    // 1. Log inicial
-    this.logger.log(`Outbox batch: ${events.length} events`);
+    this.isPublishing = true;
 
-    let publishedCount = 0;
-    let failedCount = 0;
+    try {
+      const events = await this.prisma.client.outboxEvent.findMany({
+        where: {
+          publishedAt: null,
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+        take: 50,
+      });
 
-    // 2. Procesamiento y métricas
-    for (const event of events) {
-      const success = await this.publishEvent(event);
-
-      if (success) {
-        publishedCount++;
-      } else {
-        failedCount++;
+      if (events.length === 0) {
+        this.consecutiveFailures = 0;
+        return;
       }
-    }
 
-    // 3. Ajuste del Backoff según fallos del lote completo
-    if (failedCount > 0) {
-      this.consecutiveFailures++;
-    } else {
-      this.consecutiveFailures = 0;
-    }
+      // 1. Log inicial
+      this.logger.log(`Outbox batch: ${events.length} events`);
 
-    // 4. Log final del lote
-    this.logger.log(
-      `Outbox batch completed: total=${events.length} published=${publishedCount} failed=${failedCount}`,
-    );
-  } finally {
-    this.isPublishing = false;
-    this.scheduleNextRun();
+      let publishedCount = 0;
+      let failedCount = 0;
+
+      // 2. Procesamiento y métricas
+      for (const event of events) {
+        const success = await this.publishEvent(event);
+
+        if (success) {
+          publishedCount++;
+        } else {
+          failedCount++;
+        }
+      }
+
+      // 3. Ajuste del Backoff según fallos del lote completo
+      if (failedCount > 0) {
+        this.consecutiveFailures++;
+      } else {
+        this.consecutiveFailures = 0;
+      }
+
+      // 4. Log final del lote
+      this.logger.log(
+        `Outbox batch completed: total=${events.length} published=${publishedCount} failed=${failedCount}`,
+      );
+    } finally {
+      this.isPublishing = false;
+      this.scheduleNextRun();
+    }
   }
-}
 
   onModuleDestroy() {
-    if(this.interval) {
+    if (this.interval) {
       clearTimeout(this.interval);
     }
   }

@@ -3,12 +3,12 @@ import { OutboxPublisher } from './outbox.publisher';
 
 @Controller('outbox')
 export class OutboxController {
-    constructor(private readonly outboxPublisher: OutboxPublisher) {}
+  constructor(private readonly outboxPublisher: OutboxPublisher) {}
 
-    @Get('status')
-    async status() {
-        return {
-            status: await this.outboxPublisher.getStatus(),
-        }
-    }
+  @Get('status')
+  async status() {
+    return {
+      status: await this.outboxPublisher.getStatus(),
+    };
+  }
 }

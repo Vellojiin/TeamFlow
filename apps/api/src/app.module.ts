@@ -7,13 +7,11 @@ import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/user.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { OrganizationMembersModule } from './organization-members/organization-members.module';
-import { ProjectsModule } from './projects/projects.module'; 
+import { ProjectsModule } from './projects/projects.module';
 import { TasksModule } from './task/tasks.module';
 import { QueueModule } from './queue/queue.module';
 import { ActivityLogModule } from './activity-log/activity-log.module';
 import { OutboxModule } from './outbox/outbox.module';
-
-
 
 @Module({
   imports: [

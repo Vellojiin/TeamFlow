@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -53,7 +57,9 @@ export class TaskService {
           title: createTaskDto.title,
           description: createTaskDto.description,
           priority: createTaskDto.priority,
-          dueDate: createTaskDto.dueDate ? new Date(createTaskDto.dueDate) : undefined,
+          dueDate: createTaskDto.dueDate
+            ? new Date(createTaskDto.dueDate)
+            : undefined,
           assigneeId: createTaskDto.assigneeId,
           projectId,
         },
@@ -111,11 +117,7 @@ export class TaskService {
     });
   }
 
-  async findOne(
-    organizationId: string,
-    projectId: string,
-    taskId: string,
-  ) {
+  async findOne(organizationId: string, projectId: string, taskId: string) {
     await this.getProject(organizationId, projectId);
 
     const task = await this.prisma.client.task.findUnique({
@@ -165,7 +167,9 @@ export class TaskService {
         title: updateTaskDto.title,
         description: updateTaskDto.description,
         priority: updateTaskDto.priority,
-        dueDate: updateTaskDto.dueDate ? new Date(updateTaskDto.dueDate) : undefined,
+        dueDate: updateTaskDto.dueDate
+          ? new Date(updateTaskDto.dueDate)
+          : undefined,
         assigneeId: updateTaskDto.assigneeId,
       },
       include: {
@@ -207,11 +211,7 @@ export class TaskService {
     });
   }
 
-  async remove(
-    organizationId: string,
-    projectId: string,
-    taskId: string,
-  ) {
+  async remove(organizationId: string, projectId: string, taskId: string) {
     await this.findOne(organizationId, projectId, taskId);
 
     await this.prisma.client.task.delete({
@@ -241,21 +241,18 @@ export class TaskService {
     userId: string,
     organizationId: string,
   ) {
-    const membership =
-      await this.prisma.client.organizationMember.findFirst({
-        where: {
-          userId,
-          organizationId,
-        },
-        select: {
-          id: true,
-        },
-      });
+    const membership = await this.prisma.client.organizationMember.findFirst({
+      where: {
+        userId,
+        organizationId,
+      },
+      select: {
+        id: true,
+      },
+    });
 
     if (!membership) {
-      throw new ForbiddenException(
-        'Usuario no es miembro de la organización',
-      );
+      throw new ForbiddenException('Usuario no es miembro de la organización');
     }
   }
 }

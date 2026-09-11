@@ -1,5 +1,6 @@
-
-const { TaskCreatedProcessor } = require('../../../worker/src/queue/task-created.processor');
+const {
+  TaskCreatedProcessor,
+} = require('../../../worker/src/queue/task-created.processor');
 
 const TASK_CREATED_EVENT = 'task.created';
 
@@ -29,9 +30,11 @@ describe('TaskCreatedProcessor', () => {
           }),
         },
         activityLog: {
-          create: jest.fn().mockRejectedValue(
-            Object.assign(new Error('Duplicate key'), { code: 'P2002' }),
-          ),
+          create: jest
+            .fn()
+            .mockRejectedValue(
+              Object.assign(new Error('Duplicate key'), { code: 'P2002' }),
+            ),
         },
       },
     };
