@@ -1,5 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
-import ThemeToggle from "./components/ThemeToggle";
+import ThemeToggle from "../src/modules/auth/ui/components/ThemeToggle";
 
 export default function HomePage() {
   return (
@@ -7,10 +8,16 @@ export default function HomePage() {
       <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-6 sm:px-10 lg:px-16">
         <header className="flex items-center justify-between border-b border-marine/10 py-6 dark:border-warm-white/10">
           <Link href="/" className="flex items-center gap-2" aria-label="TeamFlow, inicio">
-            
-              <img src="/Logo-nobg.png" alt="Logo de TeamFlow" width={80} height={80} />
-      
-            <span className="text-xl font-bold tracking-tight text-marine dark:text-warm-white">Team<span className="text-electric">Flow</span></span>
+            <Image 
+              src="/Logo-nobg.png" 
+              alt="Logo de TeamFlow" 
+              width={80} 
+              height={80} 
+              priority
+            />
+            <span className="text-xl font-bold tracking-tight text-marine dark:text-warm-white">
+              Team<span className="text-mint">Flow</span>
+            </span>
           </Link>
           <ThemeToggle />
         </header>
@@ -43,8 +50,15 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="relative animate-[fade-up_700ms_150ms_ease-out_both]" aria-label="Vista previa de un tablero de proyecto">
-            <img src="/Logo_con_Eslogan.jfif" alt="Vista previa de un tablero de proyecto" className="rounded-2xl border border-marine/10 shadow-[0_0_0_1px_#17a8e0] dark:border-warm-white/10 dark:shadow-[0_0_0_1px_#17a8e0]" />
+          <div className="relative animate-[fade-up_700ms_150ms_ease-out_both]">
+            <Image 
+              src="/Logo_con_Eslogan.jfif" 
+              alt="TeamFlow - Logo con eslogan" 
+              width={600}
+              height={400}
+              className="w-full rounded-2xl border border-marine/10 object-cover shadow-[0_0_0_1px_#17a8e0] dark:border-warm-white/10 dark:shadow-[0_0_0_1px_#17a8e0]" 
+              priority
+            />
           </div>
         </section>
 
