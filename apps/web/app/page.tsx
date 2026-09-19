@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import ThemeToggle from "../src/modules/auth/ui/components/ThemeToggle";
+import ThemeToggle from "@/src/modules/auth/ui/components/ThemeToggle";
 
 export default function HomePage() {
   return (

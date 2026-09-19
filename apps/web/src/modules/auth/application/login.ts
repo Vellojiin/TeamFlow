@@ -1,5 +1,5 @@
-import type { AuthRepository, LoginCredentials } from "../domain/ports/auth-repository";
-import { AuthSession } from "../domain/models/auth-session";
+import type { AuthRepository, LoginCredentials } from "@/src/modules/auth/domain/ports/auth-repository";
+import { AuthSession } from "@/src/modules/auth/domain/models/auth-session";
 
 
 export class Login {

@@ -1,5 +1,5 @@
-import type { User } from "../domain/entities/user";
-import type { AuthRepository, RegisterData } from "../domain/ports/auth-repository";
+import type { User } from "@/src/modules/auth/domain/entities/user";
+import type { AuthRepository, RegisterData } from "@/src/modules/auth/domain/ports/auth-repository";
 
 export class Register {
     constructor(private readonly authRepository: AuthRepository) {}

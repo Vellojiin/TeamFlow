@@ -1,4 +1,4 @@
-import type { AuthRepository } from "../domain/ports/auth-repository";
+import type { AuthRepository } from "@/src/modules/auth/domain/ports/auth-repository";
 
 export class Logout {
   constructor(private readonly authRepository: AuthRepository) {}
