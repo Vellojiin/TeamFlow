@@ -110,7 +110,7 @@ export default function LoginPage() {
                     onChange={(event) => setEmail(event.target.value)}
                     required
                     disabled={isLoading}
-                    placeholder="tu@email.com"
+                    placeholder="Correo electronico"
                     className="w-full rounded-xl border border-marine/15 bg-white px-4 py-3 text-sm text-marine outline-none transition placeholder:text-marine/35 focus:border-electric focus:ring-2 focus:ring-electric/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-warm-white/15 dark:bg-[#081b2a] dark:text-warm-white dark:placeholder:text-warm-white/30"
                   />
                 </div>

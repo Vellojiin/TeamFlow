@@ -12,7 +12,7 @@ export function useRequiredAuth(){
 
     useEffect(() => {
         if (!isLoading && !user) {
-            router.replace("/login");
+            router.replace("/");
         }
     }, [isLoading, user, router])
 
