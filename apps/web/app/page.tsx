@@ -11,8 +11,8 @@ export default function HomePage() {
             <Image 
               src="/Logo-nobg.png" 
               alt="Logo de TeamFlow" 
-              width={80} 
-              height={80} 
+              width={80}
+              height={44}
               priority
             />
             <span className="text-xl font-bold tracking-tight text-marine dark:text-warm-white">
@@ -55,7 +55,7 @@ export default function HomePage() {
               src="/Logo_con_Eslogan.jfif" 
               alt="TeamFlow - Logo con eslogan" 
               width={600}
-              height={400}
+              height={327}
               className="w-full rounded-2xl border border-marine/10 object-cover shadow-[0_0_0_1px_#17a8e0] dark:border-warm-white/10 dark:shadow-[0_0_0_1px_#17a8e0]" 
               priority
             />
